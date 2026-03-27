@@ -1,3 +1,4 @@
+import { Link, useInRouterContext } from "react-router-dom";
 import {
   FaGlobe,
   FaTwitter,
@@ -10,6 +11,7 @@ import { getEventStatus } from "../utils/eventHelpers";
 
 export default function EventCard({ event }) {
   const status = getEventStatus(event.date);
+  const inRouter = useInRouterContext();
   const formattedDate = new Date(event.date + "T00:00:00").toLocaleDateString(
     "en-US",
     {
@@ -79,35 +81,23 @@ export default function EventCard({ event }) {
         </div>
       )}
 
-      <div className="moreInfo">
-        {event.url && (
+      {event.url &&
+        (inRouter ? (
+          <Link to={`/event/${event.id}`} className="event-card__link">
+            Learn more
+            <span className="event-card__link-arrow">→</span>
+          </Link>
+        ) : (
           <a
             href={event.url}
-            className="event-card__link"
             target="_blank"
             rel="noopener noreferrer"
+            className="event-card__link"
           >
             Learn more
             <span className="event-card__link-arrow">→</span>
           </a>
-        )}
-
-        {event.socials && event.socials.length > 0 && (
-          <div className="socialIcons">
-            {event.socials.map((social, index) => (
-              <a
-                key={index}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={social.name}
-              >
-                {getSocialIcon(social.name)}
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
+        ))}
     </article>
   );
 }
